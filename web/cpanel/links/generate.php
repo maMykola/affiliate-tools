@@ -2,4 +2,11 @@
 
 require_once __DIR__ . '/../core.php';
 
-renderTemplate('cpanel_links_generate');
+$url = filter_input(INPUT_POST, 'url');
+
+$link = getAffiliateLink($url);
+
+renderTemplate('cpanel_links_generate', compact([
+    'url',
+    'link',
+    ]));
