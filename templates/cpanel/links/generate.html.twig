@@ -30,13 +30,13 @@
             <hr>
             <dl class="dl-horizontal">
                 <dt>URL</dt>
-                <dd>{{ link.url }}</dd>
+                <dd><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></dd>
 
                 <dt>Affiliate Link</dt>
-                <dd>{{ link.affiliate }}</dd>
+                <dd><a href="{{ link.affiliate }}" target="_blank">{{ link.affiliate}}</a></dd>
 
                 <dt>Site Link</dt>
-                <dd>{{ link.local }}</dd>
+                <dd><a href="{{ link.local }}" target="_blank">{{ link.local }}</a></dd>
             </dl>
         {% endif %}
     </div>
