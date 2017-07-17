@@ -11,6 +11,7 @@ $db_config = [
     'affiliate' => [
         'domain' => '',
         'campaign' => '',
+        'track_link' => '',
         'go_link' => '',
     ],
 

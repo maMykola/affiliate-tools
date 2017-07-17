@@ -211,7 +211,7 @@ function buildAffiliateLink($info)
         return null;
     }
 
-    return "http://{$config['domain']}/track?cmp={$config['campaign']}&pid={$info['id']}";
+    return "http://{$config['domain']}{$config['track_link']}?cmp={$config['campaign']}&pid={$info['id']}";
 }
 
 /**
