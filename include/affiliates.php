@@ -25,13 +25,18 @@ function getAffiliateInfo($link_id)
  * Return information for affiliate url
  *
  * @param  string  $url
+ * @param  string  $target
  * @return array
  * @author Mykola Martynov
  **/
-function getAffiliateLink($url)
+function getAffiliateLink($url, $target)
 {
-    $link = loadAffiliateLink($url);
-    return !empty($link) ? $link : addAffiliateLink($url);
+    $link = loadAffiliateLink($url, $target);
+    if (empty($link)) {
+        $link = addAffiliateLink($url, $target);
+    }
+
+    return empty($link) ? null : generateAffiliateLinks($link);
 }
 
 /**
@@ -41,34 +46,46 @@ function getAffiliateLink($url)
  * @return array
  * @author Mykola Martynov
  **/
-function loadAffiliateLink($url)
+function loadAffiliateLink($url, $target)
 {
     $dbh = getConnection();
 
-    $sql = "SELECT * FROM links WHERE url = :url LIMIT 1";
+    $sql = <<< SQL_QUERY
+SELECT
+    ln.id id,
+    ln.target_id target_id,
+    ln.url url,
+    tr.url target
+FROM links ln
+    LEFT JOIN targets tr on tr.id = ln.target_id
+WHERE ln.url = :url and ln.target_id = :target_id
+LIMIT 1
+SQL_QUERY;
 
     $sth = $dbh->prepare($sql);
-    $sth->execute(['url' => $url]);
+    $sth->execute(['url' => $url, 'target_id' => getTargetLinkId($target)]);
 
     $data = $sth->fetch(PDO::FETCH_ASSOC);
 
-    return empty($data) ? null : generateAffiliateLinks($data);
+    return $data;
 }
 
 /**
  * Add information about affiliate url
  *
  * @param  string  $url
+ * @param  string  $target
  * @return array
  * @author Mykola Martynov
  **/
-function addAffiliateLink($url)
+function addAffiliateLink($url, $target)
 {
     $dbh = getconnection();
 
-    $data = ['url' => $url];
+    $target_id = getTargetLinkId($target);
+    $data = ['url' => $url, 'target_id' => $target_id];
 
-    $sql = "INSERT INTO links (url) VALUES (:url)";
+    $sql = "INSERT INTO links (url, target_id) VALUES (:url, :target_id)";
     $sth = $dbh->prepare($sql);
     $sth->execute($data);
 
@@ -77,9 +94,79 @@ function addAffiliateLink($url)
         return null;
     }
 
-    $data['id'] = intval($link_id);
+    $link = [
+        'id' => intval($link_id),
+        'target_id' => $target_id,
+        'url' => $url,
+        'target' => $target,
+    ];
 
-    return generateAffiliateLinks($data);
+    return $link;
+}
+
+/**
+ * Return identifier for given url as a target
+ *
+ * @param  string  $url
+ * @return integer
+ * @author Mykola Martynov
+ **/
+function getTargetLinkId($url)
+{
+    $info = loadTargetInfo($url);
+    if (empty($info)) {
+        $info = addTargetInfo($url);
+    }
+
+    return empty($info['id']) ? null : $info['id'];
+}
+
+/**
+ * Return information about target link
+ *
+ * @param  string  $url
+ * @return array
+ * @author Mykola Martynov
+ **/
+function loadTargetInfo($url)
+{
+    $dbh = getConnection();
+
+    $sql = "SELECT * FROM targets WHERE url = :url";
+    $sth = $dbh->prepare($sql);
+    $sth->execute(['url' => $url]);
+
+    $data = $sth->fetch(PDO::FETCH_ASSOC);
+
+    return empty($data) ? null : $data;
+}
+
+/**
+ * Add information about target link
+ *
+ * @param  string  $url
+ * @return array
+ * @author Mykola Martynov
+ **/
+function addTargetInfo($url)
+{
+    $dbh = getConnection();
+
+    $sql = "INSERT INTO targets (url) VALUES (:url)";
+    $sth = $dbh->prepare($sql);
+    $sth->execute(['url' => $url]);
+
+    $link_id = $dbh->lastInsertId();
+    if (empty($link_id)) {
+        return null;
+    }
+
+    $info = [
+        'id' => $link_id,
+        'url' => $url,
+    ];
+
+    return $info;
 }
 
 /**

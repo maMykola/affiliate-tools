@@ -5,6 +5,7 @@ require_once VENDOR_DIR . 'autoload.php';
 require_once LIB_DIR . 'parameters.php';
 require_once LIB_DIR . 'templates.php';
 require_once LIB_DIR . 'affiliates.php';
+require_once LIB_DIR . 'helpers.php';
 require_once LIB_DIR . 'db.php';
 
 # configure twig
