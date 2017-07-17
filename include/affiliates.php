@@ -1,6 +1,27 @@
 <?php
 
 /**
+ * Return information about affiliate link by identifier
+ *
+ * @param  integer  $link_id
+ * @return array
+ * @author Mykola Martynov
+ **/
+function getAffiliateInfo($link_id)
+{
+    $dbh = getConnection();
+
+    $sql = "SELECT * FROM links WHERE id = :id LIMIT 1";
+
+    $sth = $dbh->prepare($sql);
+    $sth->execute(['id' => $link_id]);
+
+    $data = $sth->fetch(PDO::FETCH_ASSOC);
+
+    return empty($data) ? null : generateAffiliateLinks($data);
+}
+
+/**
  * Return information for affiliate url
  *
  * @param  string  $url
@@ -31,7 +52,7 @@ function loadAffiliateLink($url)
 
     $data = $sth->fetch(PDO::FETCH_ASSOC);
 
-    return empty($data) ? null : genearteAffiliateLinks($data);
+    return empty($data) ? null : generateAffiliateLinks($data);
 }
 
 /**
@@ -58,7 +79,7 @@ function addAffiliateLink($url)
 
     $data['id'] = intval($link_id);
 
-    return genearteAffiliateLinks($data);
+    return generateAffiliateLinks($data);
 }
 
 /**
@@ -68,7 +89,7 @@ function addAffiliateLink($url)
  * @return array
  * @author Mykola Martynov
  **/
-function genearteAffiliateLinks($data)
+function generateAffiliateLinks($data)
 {
     $links = [
         'affiliate' => buildAffiliateLink($data),

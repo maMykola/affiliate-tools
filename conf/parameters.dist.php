@@ -13,4 +13,8 @@ $db_config = [
         'campaign' => '',
         'go_link' => '',
     ],
+
+    'api_keys' => [
+        'xxx' => 'domain.com',
+    ],
 ];
