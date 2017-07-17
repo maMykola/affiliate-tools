@@ -11,7 +11,17 @@ function getAffiliateInfo($link_id)
 {
     $dbh = getConnection();
 
-    $sql = "SELECT * FROM links WHERE id = :id LIMIT 1";
+    $sql = <<< SQL_QUERY
+SELECT
+    ln.id id,
+    ln.target_id target_id,
+    ln.url url,
+    tr.url target
+FROM links ln
+    LEFT JOIN targets tr on tr.id = ln.target_id
+WHERE ln.id = :id
+LIMIT 1
+SQL_QUERY;
 
     $sth = $dbh->prepare($sql);
     $sth->execute(['id' => $link_id]);
@@ -26,6 +36,7 @@ function getAffiliateInfo($link_id)
  *
  * @param  string  $url
  * @param  string  $target
+ * @param  boolean $add
  * @return array
  * @author Mykola Martynov
  **/
