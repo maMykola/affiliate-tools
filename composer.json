@@ -1,5 +1,15 @@
 {
+    "name": "uspc/affiliate-tools",
+    "description": "Tools for Affiliate Links",
+    "authors": [
+        {
+            "name": "Mykola Martynov",
+            "email": "mykola.martynov@hotmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
     "require": {
+        "php": ">=5.5.0",
         "twig/twig": "~1.0",
         "robmorgan/phinx": "^0.8.1"
     }
