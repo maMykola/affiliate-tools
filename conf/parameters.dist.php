@@ -1,11 +1,13 @@
 <?php
 
-$db_config = [
-    'default' => [
-        'host' => '',
-        'database' => '',
-        'username' => '',
-        'password' => '',
+return [
+    'db_config' => [
+        'default' => [
+            'host' => '',
+            'database' => '',
+            'username' => '',
+            'password' => '',
+        ],
     ],
 
     'affiliate' => [

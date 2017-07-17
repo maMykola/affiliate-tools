@@ -227,5 +227,5 @@ function buildLocalLink($info)
         return null;
     }
 
-    return "{$config['go_link']}?pid={$info['id']}";
+    return "http://{$config['domain']}{$config['go_link']}?pid={$info['id']}";
 }
